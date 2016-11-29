@@ -970,6 +970,22 @@ def PyData(files=None,
         data_config.constant_slots.extend(constant_slots)
     return data_config
 
+# experiment for internal rpc version.
+# TODO(hanchao,hohdiy): fix me.
+@config_func
+def RPCData(port=None,
+	    addr=None,
+	    capacity=None,
+	    **xargs):
+    data_config = DataBase(**xargs)
+    data_config.type = 'rpc_proto'
+    if port is not None:
+        data_config.rpc_port = port
+    if addr is not None:
+        data_config.rpc_addr = addr
+    if capacity is not None:
+        data_config.rpc_capacity = capacity
+    return data_config
 
 @config_func
 def ProtoData(files=None,
@@ -1112,6 +1128,9 @@ def parse_pool(pool, input_layer_name, pool_conf):
                   (pool_conf.img_size, img_pixels))
 
     config_assert(not pool.start, "start is deprecated in pooling.")
+    # trick for old paddle version. because old proto start field is required.
+    # TODO(hanchao, hohdiy): use new paddle version instead.
+    pool_conf.start = 0
 
     if pool.padding is not None:
         pool_conf.padding = pool.padding
@@ -3380,6 +3399,8 @@ def parse_config(config_file, config_arg_str):
     g_root_submodel.name = 'root'
     g_root_submodel.is_recurrent_layer_group = False
     g_current_submodel = g_root_submodel
+
+    TrainData(RPCData(port=8078, addr="0.0.0.0"))
 
     # for paddle on spark, need support non-file config.
     # you can use parse_config like below:

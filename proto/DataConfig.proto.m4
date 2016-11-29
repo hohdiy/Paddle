@@ -80,5 +80,15 @@ sinclude(`DataConfigInter.proto.m4')
 
   // the usage ratio of instances. Setting to 1.0 means the use of all instances.
   optional real usage_ratio = 27 [default = 1.0];
+
+  // the port for rpc data provider.
+  optional int32 rpc_port = 28 [default = 9732];
+
+  // the ip string for rpc data provider.
+  // default use --nics to get ip string.
+  optional string rpc_addr = 29 [default = ""];
+
+  // the batch size cached in memory.
+  optional int32 rpc_capacity = 30 [default = 100000];
 };
 
